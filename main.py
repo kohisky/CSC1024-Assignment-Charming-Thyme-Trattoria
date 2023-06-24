@@ -12,6 +12,7 @@ initialReservationsTxt = 'reservation_StudentID.txt'
 menuItemsTxt = 'menuItems_StudentID.txt'
 
 #Variables
+date_format = "%Y-%m-%d"
 customerReservations = []
 menuItems = []
 
@@ -26,11 +27,35 @@ def NavigateMenu():
                                          (|               (|                     
                                                                        
     """)
-    print("                🌹 Welcome to Charming Thyme Trattoria! 🌹                  ")
+    print("{:^100}".format("🌹 Welcome to Charming Thyme Trattoria! 🌹")                  )
+
     print(" [1] Book a reservation 🍽️ ")
     print(" [2] Delete a reservation 🗑️ ")
     print(" [3] Edit a reservation ✍️ ")
     print(" [4] Recommend me a dish! 🍴")
+
+    while True:
+        try:
+            navigateUserInput = int(input(("Please select a number : ")))
+        except Exception:
+            print("Please input a number from 1 to 4!")
+            continue
+
+        if (navigateUserInput < 5) and (navigateUserInput > 0):
+            break
+
+        print("Please input a number from 1 to 4!")
+
+    if(navigateUserInput == 1):
+        WriteReservationList()
+    elif(navigateUserInput == 2):
+        DeleteReservationList()
+    elif(navigateUserInput == 3):
+        EditReservationList()
+    elif(navigateUserInput == 4):
+        GenerateMealRecommendation()
+    else:
+        print("what the fuck did you fuck up")
 
 def ReadReservationDatabase():
     '''Reads initial reservations from provided .txt file and write into customerReservations'''
@@ -45,9 +70,25 @@ def ReadMenuDatabase():
         menuItemsList = menuFile.read()
         for menuItem in menuItemsList.split('\n'):
             menuItems.append(menuItem)
+    
 
 def WriteReservationList():
-    pass
+    #TODO:Consider choosing days 5 days in advanced?
+    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=5)
+    print("{:^100}".format(f"Book a reservation! Earliest date for booking : {minDateInAdvanced}"))
+    while True:
+        reservationDate = input("Please insert date (yyyy-mm-dd): ")
+        try:
+            datetime.date.fromisoformat(reservationDate)
+        except ValueError:
+            print("Please insert date in the iso format (yyyy-mm-dd)!")
+            continue
+        
+        if (datetime.datetime.strptime(reservationDate,date_format)-datetime.datetime.today()).days > 5:
+            break
+        print(f"Earliest date for booking : {minDateInAdvanced}")
+    
+
 
 def DeleteReservationList():
     pass
@@ -58,10 +99,6 @@ def EditReservationList():
 
 def GenerateMealRecommendation():
     print(f"🔥 Recommendation : {random.choice(menuItems)} 🔥")
-
-
-test
-
 
 
 if __name__ == '__main__':
