@@ -40,7 +40,7 @@ def ReadMenuDatabase():
 def GenerateMealRecommendation():
     print(f"🔥 Recommendation : {random.choice(menuItems)} 🔥")
 
-
+test
 
 
 if __name__ == '__main__':
