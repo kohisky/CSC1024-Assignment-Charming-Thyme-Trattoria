@@ -60,6 +60,10 @@ def GenerateMealRecommendation():
     print(f"🔥 Recommendation : {random.choice(menuItems)} 🔥")
 
 
+test
+
+
+
 if __name__ == '__main__':
     ReadReservationDatabase()
     ReadMenuDatabase()
