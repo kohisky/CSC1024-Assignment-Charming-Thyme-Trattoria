@@ -27,7 +27,7 @@ def NavigateMenu():
                                          (|               (|                     
                                                                        
     """)
-    print("{:^100}".format("🌹 Welcome to Charming Thyme Trattoria! 🌹")                  )
+    print("{:^100}".format("🌹 Welcome to Charming Thyme Trattoria! 🌹"))
 
     print(" [1] Book a reservation 🍽️ ")
     print(" [2] Delete a reservation 🗑️ ")
@@ -74,7 +74,12 @@ def ReadMenuDatabase():
 
 def WriteReservationList():
     #TODO:Consider choosing days 5 days in advanced?
-    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=5)
+
+    currentUserReservation = []
+
+    #Date
+    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=6)
+    os.system('cls')
     print("{:^100}".format(f"Book a reservation! Earliest date for booking : {minDateInAdvanced}"))
     while True:
         reservationDate = input("Please insert date (yyyy-mm-dd): ")
@@ -83,12 +88,81 @@ def WriteReservationList():
         except ValueError:
             print("Please insert date in the iso format (yyyy-mm-dd)!")
             continue
-        
-        if (datetime.datetime.strptime(reservationDate,date_format)-datetime.datetime.today()).days > 5:
+
+        daysDifference = datetime.datetime.strptime(reservationDate,date_format)-datetime.datetime.today()
+        if (daysDifference.days >= 5):
+            currentUserReservation.append(reservationDate)
+            print(currentUserReservation) #TODO: 'Slot added to
             break
         print(f"Earliest date for booking : {minDateInAdvanced}")
-    
+        print(daysDifference.days)
 
+    #Slots
+    while True:
+        os.system('cls')
+        print("{:^100}".format(" Please select a slot "))
+        print(" [1] Slot 1 ")
+        print(" [2] Slot 2 ")
+        print(" [3] Slot 3 ")
+        print(" [4] Slot 4 ")
+        print(" [5] Slot 5 ")
+        print(" [6] Slot 6 ")
+        print(" [7] Slot 7 ")
+        print(" [8] Slot 8 ")
+
+        try:
+            slotReservationInput = int(input(("Please select a number : ")))
+        except Exception:
+            print("Please input a number from 1 to 8!")
+            continue
+
+        if (slotReservationInput < 9) and (slotReservationInput > 0):
+            currentUserReservation.append(f"Slot {slotReservationInput}")
+            print(currentUserReservation) #TODO: 'Slot added to
+            break
+
+        print("Please input a number from 1 to 8!")
+
+    #Name
+    os.system('cls')
+    print(" Please type your name : ")
+    nameReservationInput = input("Name : ").upper()
+    currentUserReservation.append(nameReservationInput)
+    print(currentUserReservation)
+
+    #Email TODO:Add redundancy
+    os.system('cls')
+    print(" Please type your email : ")
+    emailReservationInput = input("email : ")
+    currentUserReservation.append(emailReservationInput)
+    print(currentUserReservation)
+
+    #Contact number TODO:add redundancy
+    os.system('cls')
+    print(" Please type your contact number ")
+    numberReservationInput = input("contact number : ")
+    currentUserReservation.append(numberReservationInput)
+    print(currentUserReservation)
+
+    #PAX TODO:add redundancy
+    os.system('cls')
+    print(" How many people ")
+    numberReservationInput = input("PAX : ")
+    currentUserReservation.append(numberReservationInput)
+    print(currentUserReservation)
+
+    #Confirmation
+    os.system('cls')
+    print(f""" Confirm booking :  
+    Name : {currentUserReservation[2]}
+    Date : {currentUserReservation[0]}
+    Slot : {currentUserReservation[1]}
+    PAX : {currentUserReservation[5]}
+    Number : {currentUserReservation[4]}
+    Email : {currentUserReservation[3]}
+    """)
+
+    customerReservations.append(currentUserReservation)
 
 def DeleteReservationList():
     pass
