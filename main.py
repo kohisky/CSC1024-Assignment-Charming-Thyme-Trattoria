@@ -29,22 +29,24 @@ def NavigateMenu():
     """)
     print("{:^100}".format("🌹 Welcome to Charming Thyme Trattoria! 🌹"))
 
-    print(" [1] Book a reservation 🍽️ ")
+    print(" [1] Book a reservation   🍽️ ")
     print(" [2] Delete a reservation 🗑️ ")
-    print(" [3] Edit a reservation ✍️ ")
-    print(" [4] Recommend me a dish! 🍴")
+    print(" [3] Edit a reservation   ✍️ ")
+    print(" [4] Display Reservations 🗒️")
+    print(" [5] Recommend me a dish! 🍴")
+    print(" [6] Close Transaction    ✅")
 
     while True:
         try:
             navigateUserInput = int(input(("Please select a number : ")))
         except Exception:
-            print("Please input a number from 1 to 4!")
+            print("Please input a number from 1 to 6!")
             continue
 
-        if (navigateUserInput < 5) and (navigateUserInput > 0):
+        if (navigateUserInput < 7) and (navigateUserInput > 0):
             break
 
-        print("Please input a number from 1 to 4!")
+        print("Please input a number from 1 to 6!")
 
     if(navigateUserInput == 1):
         WriteReservationList()
@@ -53,8 +55,12 @@ def NavigateMenu():
     elif(navigateUserInput == 3):
         EditReservationList()
     elif(navigateUserInput == 4):
+        ReadReservationDatabase()
+    elif(navigateUserInput == 5):
         GenerateMealRecommendation()
-    else:
+    elif(navigateUserInput == 6):
+        os.system('cls')
+    else: #not sure if this [else] is needed but wokay
         print("what the fuck did you fuck up")
 
 def ReadReservationDatabase():
@@ -95,28 +101,31 @@ def WriteReservationList():
             print(currentUserReservation) #TODO: 'Slot added to
             break
         print(f"Earliest date for booking : {minDateInAdvanced}")
-        print(daysDifference.days)
+        print(daysDifference.days) 
+        ''' ↑ Slightly confusing for the user as to a random number 
+        if unknown to the fact it is the day difference between today and the day enter '''
 
     #Slots
     while True:
         os.system('cls')
         print("{:^100}".format(" Please select a slot "))
-        print(" [1] Slot 1 ")
-        print(" [2] Slot 2 ")
-        print(" [3] Slot 3 ")
-        print(" [4] Slot 4 ")
-        print(" [5] Slot 5 ")
-        print(" [6] Slot 6 ")
-        print(" [7] Slot 7 ")
-        print(" [8] Slot 8 ")
+        ''' There are 4 slot and not 8 "The restaurant only serves 4 sessions(slot) each day"
+        The 8 reservation per session means in each session only 8 reservation is allowed
+        So like slot 1 can accommodate 8 max, slot 2 accomodate 8 max, slot 3 accomodate 8 max, slot 4 accomodate 8 max
+        hence in one day the maximum reservation allowed in 4 * 8 = 32 reservation. '''
+        print(" [1] 12:00 pm - 02:00 pm")
+        print(" [2] 02:00 pm - 04:00 pm")
+        print(" [3] 06:00 pm - 08:00 pm")
+        print(" [4] 08:00 pm - 10:00 pm")
+
 
         try:
             slotReservationInput = int(input(("Please select a number : ")))
         except Exception:
-            print("Please input a number from 1 to 8!")
+            print("Please input a number from 1 to 4!")
             continue
 
-        if (slotReservationInput < 9) and (slotReservationInput > 0):
+        if (slotReservationInput < 5) and (slotReservationInput > 0):
             currentUserReservation.append(f"Slot {slotReservationInput}")
             print(currentUserReservation) #TODO: 'Slot added to
             break
@@ -152,6 +161,7 @@ def WriteReservationList():
     print(currentUserReservation)
 
     #Confirmation
+    #TODO: add confirm or cancel option + add to txt file
     os.system('cls')
     print(f""" Confirm booking :  
     Name : {currentUserReservation[2]}
