@@ -174,10 +174,18 @@ def WriteReservationList():
 
     customerReservations.append(currentUserReservation)
 
-def DeleteReservationList():
+def DisplayReservationList():
+    for customerReservation in customerReservations:
+        print(customerReservation)
+
+def DeleteReservationList(): #TODO ideas
+    os.system('cls')
+    DisplayReservationList()
     pass
 
-def EditReservationList():
+def EditReservationList(): #TODO ideas
+    os.system('cls')
+    DisplayReservationList()
     pass
 
 
