@@ -1,5 +1,5 @@
+import datetime
 import random
-from datetime import*
 import os
 
 #                                      -------------    Guidelines   --------------
@@ -47,7 +47,7 @@ def NavigateMenu():
             break
 
         print("Please input a number from 1 to 6!")
-
+    #TODO: evaluate matchcase vs elif
     if(navigateUserInput == 1):
         WriteReservationList()
     elif(navigateUserInput == 2):
@@ -61,7 +61,7 @@ def NavigateMenu():
     elif(navigateUserInput == 6):
         os.system('cls')
     else: #not sure if this [else] is needed but wokay
-        print("what the fuck did you fuck up")
+        print("Expect The Unexpected")
 
 def ReadReservationDatabase():
     '''Reads initial reservations from provided .txt file and write into customerReservations'''
@@ -76,14 +76,14 @@ def ReadMenuDatabase():
         menuItemsList = menuFile.read()
         for menuItem in menuItemsList.split('\n'):
             menuItems.append(menuItem)
-    
 
-def WriteReservationList():
-    #TODO:Consider choosing days 5 days in advanced?
+def WriteReservationDatabase():
+    pass
 
-    currentUserReservation = []
-
-    #Date
+def GetReservationDate():
+    """Ask user for date, checks if custom date is 5 days ahead of today, returns the date in iso format"""
+    # TODO:Consider giving users to choose first 5 of the days available? if date have 32 bookings, X
+    # Custom Date
     minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=6)
     os.system('cls')
     print("{:^100}".format(f"Book a reservation! Earliest date for booking : {minDateInAdvanced}"))
@@ -95,81 +95,143 @@ def WriteReservationList():
             print("Please insert date in the iso format (yyyy-mm-dd)!")
             continue
 
-        daysDifference = datetime.datetime.strptime(reservationDate,date_format)-datetime.datetime.today()
+        daysDifference = datetime.datetime.strptime(reservationDate, date_format) - datetime.datetime.today()
         if (daysDifference.days >= 5):
-            currentUserReservation.append(reservationDate)
-            print(currentUserReservation) #TODO: 'Slot added to
+            return reservationDate
+
             break
         print(f"Earliest date for booking : {minDateInAdvanced}")
-        print(daysDifference.days) 
-        ''' ↑ Slightly confusing for the user as to a random number 
-        if unknown to the fact it is the day difference between today and the day enter '''
+        print(daysDifference.days)
+        # TODO:↑ Slightly confusing for the user as to a random number if unknown to the fact it is the day difference between today and the day enter ''
 
-    #Slots
+def CheckAvailableSessionAndSlot(date):
+    """Given a date checks for available sessions and slots, return 2d list of available session and slots"""
+    sessionSlots = [[],[],[],[]]
+    for customerReservation in customerReservations:
+        if customerReservation[0] == date:
+            sessionSlots[int(customerReservation[1])-1].append(customerReservation[2])
+    return sessionSlots
+
+def GetReservationSession(sessionSlots):
+
+    sessions = [
+        [1, "12:00 pm - 02:00 pm"],
+        [2, "02:00 pm - 04:00 pm"],
+        [3, "06:00 pm - 08:00 pm"],
+        [4, "08:00 pm - 10:00 pm"]
+        ]
+    for session in range(len(sessions)):
+        if len(sessionSlots[session]) >= 8:
+            sessions[session][0] = "X"
+
     while True:
-        os.system('cls')
-        print("{:^100}".format(" Please select a slot "))
-        ''' There are 4 slot and not 8 "The restaurant only serves 4 sessions(slot) each day"
-        The 8 reservation per session means in each session only 8 reservation is allowed
-        So like slot 1 can accommodate 8 max, slot 2 accomodate 8 max, slot 3 accomodate 8 max, slot 4 accomodate 8 max
-        hence in one day the maximum reservation allowed in 4 * 8 = 32 reservation. '''
-        print(" [1] 12:00 pm - 02:00 pm")
-        print(" [2] 02:00 pm - 04:00 pm")
-        print(" [3] 06:00 pm - 08:00 pm")
-        print(" [4] 08:00 pm - 10:00 pm")
-
+        os.system('cls')  # TODO: make it not erase error messages
+        print("{:^100}".format(" Please select a session "))
+        for session in range(len(sessions)):
+            print(f"[{sessions[session][0]}] {sessions[session][1]}")
 
         try:
-            slotReservationInput = int(input(("Please select a number : ")))
+            sessionReservationInput = int(input(("Please select a number : ")))
         except Exception:
             print("Please input a number from 1 to 4!")
             continue
 
-        if (slotReservationInput < 5) and (slotReservationInput > 0):
-            currentUserReservation.append(f"Slot {slotReservationInput}")
-            print(currentUserReservation) #TODO: 'Slot added to
-            break
+        if (sessionReservationInput < 5) and (sessionReservationInput > 0):
+            if sessions[sessionReservationInput-1][0] != "X":
+                return sessionReservationInput
+            else :
+                print("Chosen Session is already full, please pick another!")
+                continue
+        print("Please input a number from 1 to 4!")
 
+def GetReservationSlot(sessionSlots):
+
+    slots = [
+        [1, "Slot 1"],
+        [2, "Slot 2"],
+        [3, "Slot 3"],
+        [4, "Slot 4"],
+        [5, "Slot 5"],
+        [6, "Slot 6"],
+        [7, "Slot 7"],
+        [8, "Slot 8"],
+    ]
+    print(sessionSlots)
+    for slot in sessionSlots:
+        slots[int(slot)-1][0] = "X"
+    print(slots)
+
+    while True:
+        os.system('cls')
+        print("{:^100}".format(" Please select a slot "))
+        for slot in range(len(slots)):
+            print(f"[{slots[int(slot)][0]}] {slots[int(slot)][1]}")
+
+        try:
+            slotReservationInput = int(input(("Please select a number : ")))
+        except Exception:
+            print("Please input a number from 1 to 8!")
+            continue
+
+        if (slotReservationInput < 9) and (slotReservationInput > 0):
+            if slots[int(slotReservationInput)-1][0] != "X":
+                return slotReservationInput
+            else:
+                print("Chosen slot is already full, please pick another!")
+                continue
         print("Please input a number from 1 to 8!")
 
-    #Name
+def GetUserName():
     os.system('cls')
     print(" Please type your name : ")
     nameReservationInput = input("Name : ").upper()
-    currentUserReservation.append(nameReservationInput)
-    print(currentUserReservation)
+    return nameReservationInput
 
-    #Email TODO:Add redundancy
+def GetUserEmail():
+    #TODO:Add redundancy
     os.system('cls')
     print(" Please type your email : ")
     emailReservationInput = input("email : ")
-    currentUserReservation.append(emailReservationInput)
-    print(currentUserReservation)
+    return emailReservationInput
 
-    #Contact number TODO:add redundancy
+def GetUserNumber():
+    #TODO:add redundancy
     os.system('cls')
     print(" Please type your contact number ")
     numberReservationInput = input("contact number : ")
-    currentUserReservation.append(numberReservationInput)
-    print(currentUserReservation)
+    return numberReservationInput
 
-    #PAX TODO:add redundancy
+def GetUserPAX():
+    #TODO:add redundancy
     os.system('cls')
     print(" How many people ")
     numberReservationInput = input("PAX : ")
-    currentUserReservation.append(numberReservationInput)
+    return numberReservationInput
+
+def WriteReservationList():
+    currentUserReservation = []
+    #TODO: make these more readable
+    currentUserReservation.append(GetReservationDate())
+    currentUserReservation.append(str(GetReservationSession(CheckAvailableSessionAndSlot(currentUserReservation[0]))))
+    currentUserReservation.append(str(GetReservationSlot(CheckAvailableSessionAndSlot(currentUserReservation[0])[int(currentUserReservation[1])-1])))
+    currentUserReservation.append(GetUserName())
+    currentUserReservation.append(GetUserEmail())
+    currentUserReservation.append(GetUserNumber())
+    currentUserReservation.append(GetUserPAX())
     print(currentUserReservation)
+
 
     #Confirmation
     #TODO: add confirm or cancel option + add to txt file
     os.system('cls')
     print(f""" Confirm booking :  
-    Name : {currentUserReservation[2]}
+    Name : {currentUserReservation[3]}
     Date : {currentUserReservation[0]}
+    Session : {currentUserReservation[2]}
     Slot : {currentUserReservation[1]}
-    PAX : {currentUserReservation[5]}
-    Number : {currentUserReservation[4]}
-    Email : {currentUserReservation[3]}
+    PAX : {currentUserReservation[6]}
+    Number : {currentUserReservation[5]}
+    Email : {currentUserReservation[4]}
     """)
 
     customerReservations.append(currentUserReservation)
@@ -199,14 +261,14 @@ def EditReservationList(): #TODO ideas
         try:
             #Using their phone number to find their reservation to edit
             pncheck = input("Please enter your number to find your Reservation.")
-            mobilelocation = 4
+            mobilelocation = 5
             #Find/Check the location of the phone number in the list
             while pncheck != list[mobilelocation]:
                 mobilelocation += 6
                 if IndexError:
                     print("Number does not exist within the database.")
                     pncheck = input("Please enter your number to find your Reservation.")
-                    mobilelocation = 4
+                    mobilelocation = 5
                     continue
                 else:
                     break
@@ -256,10 +318,10 @@ Select: """).lower()
                 while True:
                     reservationdate = input("Please insert date (yyyy-mm-dd): ")
                     try:
-                        reservationdate = datetime.fromisoformat(reservationdate)
-                        reservationdate = datetime.date(reservationdate)
+                        reservationdate = datetime.date.fromisoformat(reservationdate)
+                        reservationdate = datetime.datetime.date(reservationdate)
                         
-                        daycheck = datetime.date(datetime.now() + timedelta(days=5))
+                        daycheck = datetime.date(datetime.datetime.now() + datetime.timedelta(days=5))
                 
                         if daycheck <= reservationdate:
                             list[datelocation] = str(reservationdate)
