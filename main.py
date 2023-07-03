@@ -179,31 +179,48 @@ def GetReservationSlot(sessionSlots):
         print("Please input a number from 1 to 8!")
 
 def GetUserName():
-    os.system('cls')
-    print(" Please type your name : ")
-    nameReservationInput = input("Name : ").upper()
+    while True:
+        os.system('cls')
+        print("{:^100}".format(" Please type your name"))
+        nameReservationInput = input("Name : ").upper()
+        if nameReservationInput.isalpha():
+            break
+        else:
+            print("Please type a proper name!")
     return nameReservationInput
 
 def GetUserEmail():
-    #TODO:Add redundancy
-    os.system('cls')
-    print(" Please type your email : ")
-    emailReservationInput = input("email : ")
+    while True:
+        os.system('cls')
+        print("{:^100}".format(" Please type your e-mail address "))
+        emailReservationInput = input("E-mail : ")
+        if emailReservationInput.isalnum():
+            break
+        else:
+            print("Please type a proper e-mail address!")
     return emailReservationInput
 
 def GetUserNumber():
-    #TODO:add redundancy
-    os.system('cls')
-    print(" Please type your contact number ")
-    numberReservationInput = input("contact number : ")
+    while True:
+        os.system('cls')
+        print("{:^100}".format (" Please type your contact number "))
+        numberReservationInput = input("Contact number : ")
+        if numberReservationInput.isnumeric():
+            break
+        else:
+            print("Please type your phone number!")
     return numberReservationInput
 
 def GetUserPAX():
-    #TODO:add redundancy
-    os.system('cls')
-    print(" How many people ")
-    numberReservationInput = input("PAX : ")
-    return numberReservationInput
+    while True:
+        os.system('cls')
+        print("{:^100}".format(" Please type the number of people "))
+        PAXReservationInput = input("PAX : ")
+        if (0 > PAXReservationInput) and (PAXReservationInput> 5):
+            break
+        else:
+            print("Restaurant seating can only accommodate 1 to 4 people only!")
+    return PAXReservationInput
 
 def WriteReservationList():
     currentUserReservation = []
