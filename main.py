@@ -17,6 +17,8 @@ customerReservations = []
 menuItems = []
 
 def NavigateMenu():
+    ReadReservationDatabase()
+    ReadMenuDatabase()
     outputMessage = ''
     while True:
         os.system('cls')
@@ -36,7 +38,8 @@ def NavigateMenu():
         print(" [4] Display Reservations ")
         print(" [5] Recommend me a dish! ")
         print(" [6] Close Transaction   ")
-        print("\n" + outputMessage)
+        print("\n")
+        print(outputMessage)
         try:
             navigateUserInput = int(input(("Please select a number : ")))
         except Exception:
@@ -50,7 +53,7 @@ def NavigateMenu():
         if(navigateUserInput == 1):
             WriteReservationList()
         elif(navigateUserInput == 2):
-            DeleteReservationList()
+            outputMessage = DeleteReservationList()
         elif(navigateUserInput == 3):
             EditReservationList()
         elif(navigateUserInput == 4):
@@ -79,16 +82,19 @@ def ReadMenuDatabase():
         for menuItem in menuItemsList.split('\n'):
             menuItems.append(menuItem)
 
-def WriteReservationDatabase(userReservation):
-    """Given a list of userReservation, write into provided .txt file, NOTE: DO NOT input a 2d list of userReservations"""
+def WriteReservationDatabase():
+    """update provided .txt file with the customerReservation"""
     string = ""
-    for detail in userReservation:
-        string += detail
-        string += "|"
-    string += "\n"
+    for customerReservation in customerReservations:
+        for detail in customerReservation:
+            string += detail
+            string += "|"
+        string = string[:-1]
+        string += "\n"
 
-    with open(initialReservationsTxt,"a") as reservationFile:
+    with open(initialReservationsTxt,"w") as reservationFile:
         reservationFile.write(string)
+
 
 def GetReservationDate():
     """Ask user for date, checks if custom date is 5 days ahead of today, returns the date in iso format"""
@@ -278,11 +284,11 @@ def WriteReservationList():
 
         confirmation = input("Confirm? [y/n] : ").upper()
         if confirmation == "Y":
-            WriteReservationDatabase(currentUserReservation)
             customerReservations.append(currentUserReservation)
+            WriteReservationDatabase()
             break
         elif confirmation == "N":
-            WriteReservationList()
+            NavigateMenu()
             break
         else:
             continue
@@ -300,7 +306,7 @@ def GetUserReservationList(phoneNumber):
     return userReservations
 
 def DisplayReservationList(userReservations):
-    """Given a reservation list, print all details of all reservations"""
+    """Given an array of reservations list, print all details of all reservations in strings"""
     reservationsString =""
     counter = 1
     if len(userReservations) == 0:
@@ -324,8 +330,51 @@ def DisplayReservationList(userReservations):
         counter+= 1
     return reservationsString
 
-def DeleteReservationList(): #TODO ideas Ask for phone number
-    os.system('cls')
+def GetReservationListToDelete(userReservations):
+    """Given a reservations list, prompts user to choose one reservation to delete, return a reservation array"""
+    while True:
+        try:
+            reservationToDelete = int(input("Which reservation do you want to delete? : ")) - 1
+            if (reservationToDelete < len(userReservations)) and (reservationToDelete >= 0):
+                print(userReservations)
+                print(DisplayReservationList([userReservations[reservationToDelete]]))
+
+                while True:
+                    confirmation = input("Confirm delete? (y/n) :").upper()
+                    if confirmation == "Y":
+                        return userReservations[reservationToDelete]
+                    elif confirmation == "N":
+                        return []
+                    else:
+                        continue
+            else:
+                print("Pick a number from the above!")
+        except Exception as e:
+            print(e)
+            print("Pick a number!")
+
+    return []
+
+def DeleteReservationList():
+    print(customerReservations)
+
+    while True:
+        os.system('cls')
+        userPhoneNumber = input("Please insert your phone number : ")
+        if userPhoneNumber.isnumeric():
+            break
+
+    userReservationList = GetUserReservationList(userPhoneNumber)
+    print(DisplayReservationList(userReservationList))
+    if len(userReservationList) <= 0:
+        return "No reservation deleted : no reservations under given number"
+    reservationListToDelete = GetReservationListToDelete(userReservationList)
+    if len(reservationListToDelete) <= 0:
+        return "No reservation deleted : no reservation chosen"
+    customerReservations.remove(reservationListToDelete)
+    WriteReservationDatabase()
+    return "1 reservation deleted"
+
 
 def EditReservationList():
     file = open("reservation_StudentID.txt")
@@ -489,6 +538,4 @@ def GenerateMealRecommendation():
 
 
 if __name__ == '__main__':
-    ReadReservationDatabase()
-    ReadMenuDatabase()
     NavigateMenu()
