@@ -85,7 +85,7 @@ def WriteReservationDatabase(userReservation):
         string += "|"
     string += "\n"
 
-    with open(initialReservationsTxt,"w") as reservationFile:
+    with open(initialReservationsTxt,"a") as reservationFile:
         reservationFile.write(string)
 
 def GetReservationDate():
