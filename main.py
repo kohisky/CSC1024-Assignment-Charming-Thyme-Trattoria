@@ -27,14 +27,14 @@ def NavigateMenu():
                                          (|               (|                     
                                                                        
     """)
-    print("{:^100}".format("🌹 Welcome to Charming Thyme Trattoria! 🌹"))
+    print("{:^100}".format(" Welcome to Charming Thyme Trattoria! "))
 
-    print(" [1] Book a reservation   🍽️ ")
-    print(" [2] Delete a reservation 🗑️ ")
-    print(" [3] Edit a reservation   ✍️ ")
-    print(" [4] Display Reservations 🗒️")
-    print(" [5] Recommend me a dish! 🍴")
-    print(" [6] Close Transaction    ✅")
+    print(" [1] Book a reservation   ")
+    print(" [2] Delete a reservation  ")
+    print(" [3] Edit a reservation    ")
+    print(" [4] Display Reservations ")
+    print(" [5] Recommend me a dish! ")
+    print(" [6] Close Transaction   ")
 
     while True:
         try:
@@ -101,8 +101,6 @@ def GetReservationDate():
 
             break
         print(f"Earliest date for booking : {minDateInAdvanced}")
-        print(daysDifference.days)
-        # TODO:↑ Slightly confusing for the user as to a random number if unknown to the fact it is the day difference between today and the day enter ''
 
 def CheckAvailableSessionAndSlot(date):
     """Given a date checks for available sessions and slots, return 2d list of available session and slots"""
@@ -156,7 +154,6 @@ def GetReservationSlot(sessionSlots):
         [7, "Slot 7"],
         [8, "Slot 8"],
     ]
-    print(sessionSlots)
     for slot in sessionSlots:
         slots[int(slot)-1][0] = "X"
     print(slots)
@@ -241,11 +238,11 @@ def DisplayReservationList():
     for customerReservation in customerReservations:
         print(customerReservation)
 
-def DeleteReservationList(): #TODO ideas
+def DeleteReservationList(): #TODO ideas Ask for phone number
     os.system('cls')
     DisplayReservationList()
 
-def EditReservationList(): #TODO ideas
+def EditReservationList():
     file = open("reservation_StudentID.txt")
 
     #List to contain all initial information from "reservation_StudentID.txt"
