@@ -17,51 +17,53 @@ customerReservations = []
 menuItems = []
 
 def NavigateMenu():
-    #TODO: format with format()? to make the spacing more consistent and possible use a box ASCII GUI
-    os.system('cls')
-    print("""
-     __                                         _____                       _____                              
-    / () |)    _,   ,_          o        _,    () ||)                 _    () | ,_   _, _|__|_  _   ,_  o  _,  
-   |     |/\  / |  /  | /|/|/|  | /|/|  / |       ||/\  |  | /|/|/|  |/       |/  | / |  |  |  / \_/  | | / |  
-    \___/|  |/\/|_/   |/ | | |_/|/ | |_/\/|/    (/ |  |/ \/|/ | | |_/|_/    (/    |/\/|_/|_/|_/\_/    |/|/\/|_/
-                                         (|               (|                     
-                                                                       
-    """)
-    print("{:^100}".format(" Welcome to Charming Thyme Trattoria! "))
-
-    print(" [1] Book a reservation   ")
-    print(" [2] Delete a reservation  ")
-    print(" [3] Edit a reservation    ")
-    print(" [4] Display Reservations ")
-    print(" [5] Recommend me a dish! ")
-    print(" [6] Close Transaction   ")
-
+    outputMessage = ''
     while True:
+        os.system('cls')
+        print("""
+            __                                         _____                       _____                              
+           / () |)    _,   ,_          o        _,    () ||)                 _    () | ,_   _, _|__|_  _   ,_  o  _,  
+          |     |/\  / |  /  | /|/|/|  | /|/|  / |       ||/\  |  | /|/|/|  |/       |/  | / |  |  |  / \_/  | | / |  
+           \___/|  |/\/|_/   |/ | | |_/|/ | |_/\/|/    (/ |  |/ \/|/ | | |_/|_/    (/    |/\/|_/|_/|_/\_/    |/|/\/|_/
+                                                (|               (|                     
+
+           """)
+        print("{:^100}".format(" Welcome to Charming Thyme Trattoria! "))
+
+        print(" [1] Book a reservation   ")
+        print(" [2] Delete a reservation  ")
+        print(" [3] Edit a reservation    ")
+        print(" [4] Display Reservations ")
+        print(" [5] Recommend me a dish! ")
+        print(" [6] Close Transaction   ")
+        print("\n" + outputMessage)
         try:
             navigateUserInput = int(input(("Please select a number : ")))
         except Exception:
-            print("Please input a number from 1 to 6!")
+            outputMessage = "Please input a number!"
+            continue
+        if (navigateUserInput > 7) or (navigateUserInput < 0):
+            outputMessage = "Please input a number from 1 to 6!"
             continue
 
-        if (navigateUserInput < 7) and (navigateUserInput > 0):
-            break
-
-        print("Please input a number from 1 to 6!")
-    #TODO: evaluate matchcase vs elif
-    if(navigateUserInput == 1):
-        WriteReservationList()
-    elif(navigateUserInput == 2):
-        DeleteReservationList()
-    elif(navigateUserInput == 3):
-        EditReservationList()
-    elif(navigateUserInput == 4):
-        DisplayReservationList()
-    elif(navigateUserInput == 5):
-        GenerateMealRecommendation()
-    elif(navigateUserInput == 6):
-        os.system('cls')
-    else: #not sure if this [else] is needed but wokay
-        print("Expect The Unexpected")
+        #TODO: evaluate matchcase vs elif
+        if(navigateUserInput == 1):
+            WriteReservationList()
+        elif(navigateUserInput == 2):
+            DeleteReservationList()
+        elif(navigateUserInput == 3):
+            EditReservationList()
+        elif(navigateUserInput == 4):
+            userPhoneNumber = input("Please insert your phone number : ")
+            outputMessage = DisplayReservationList(GetUserReservationList(userPhoneNumber))
+        elif(navigateUserInput == 5):
+            outputMessage = GenerateMealRecommendation()
+        elif(navigateUserInput == 6):
+            print("Closing Application")
+            os.system('cls')
+        else: #not sure if this [else] is needed but wokay
+            print("Expect The Unexpected")
+        continue
 
 def ReadReservationDatabase():
     '''Reads initial reservations from provided .txt file and write into customerReservations'''
@@ -284,21 +286,30 @@ def WriteReservationList():
             break
         else:
             continue
-    NavigateMenu()
 
 def GetUserReservationList(phoneNumber):
     """Given a phone number, return a list containing all reservation of said person"""
     userReservations = []
 
     for customerReservation in customerReservations:
-        if customerReservation[5] == phoneNumber:
-            userReservations.append(customerReservation)
+        try:
+            if (customerReservation[5]) == phoneNumber:
+                userReservations.append(customerReservation)
+        except Exception as e:
+            pass
     return userReservations
 
 def DisplayReservationList(userReservations):
     """Given a reservation list, print all details of all reservations"""
+    reservationsString =""
+    counter = 1
+    if len(userReservations) == 0:
+        return "There are no reservations under this number!"
     for userReservation in userReservations:
-        print(f""" Guest Details:
+
+        reservationsString += f"Reservation {counter}"
+        reservationsString += "\n"
+        reservationsString += (f""" Guest Details:
             Name : {userReservation[3]}
             Number : {userReservation[5]}
             Email : {userReservation[4]}
@@ -309,10 +320,12 @@ def DisplayReservationList(userReservations):
             Slot : {userReservation[1]}
             PAX : {userReservation[6]}
             """)
+        reservationsString += "\n"
+        counter+= 1
+    return reservationsString
 
 def DeleteReservationList(): #TODO ideas Ask for phone number
     os.system('cls')
-    DisplayReservationList()
 
 def EditReservationList():
     file = open("reservation_StudentID.txt")
@@ -472,7 +485,7 @@ Select: """)))
 
 
 def GenerateMealRecommendation():
-    print(f"🔥 Recommendation : {random.choice(menuItems)} 🔥")
+    return f" Recommendation : {random.choice(menuItems)} "
 
 
 if __name__ == '__main__':
