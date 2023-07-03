@@ -77,8 +77,16 @@ def ReadMenuDatabase():
         for menuItem in menuItemsList.split('\n'):
             menuItems.append(menuItem)
 
-def WriteReservationDatabase():
-    pass
+def WriteReservationDatabase(userReservation):
+    """Given a list of userReservation, write into provided .txt file, NOTE: DO NOT input a 2d list of userReservations"""
+    string = ""
+    for detail in userReservation:
+        string += detail
+        string += "|"
+    string += "\n"
+
+    with open(initialReservationsTxt,"w") as reservationFile:
+        reservationFile.write(string)
 
 def GetReservationDate():
     """Ask user for date, checks if custom date is 5 days ahead of today, returns the date in iso format"""
@@ -203,7 +211,7 @@ def GetUserEmail():
         print("{:^100}".format(" Please type your e-mail address "))
         print(errorMessage)
         emailReservationInput = input("E-mail : ")
-        if emailReservationInput.isalnum():
+        if len(emailReservationInput) > 6:
             break
         else:
             errorMessage = "Please type a proper e-mail address!"
@@ -219,7 +227,7 @@ def GetUserNumber():
         if numberReservationInput.isnumeric():
             break
         else:
-            errorMessage = "Please type your phone number!"
+            errorMessage = "Please type your phone number without any space/hyphens!"
     return numberReservationInput
 
 def GetUserPAX():
@@ -230,7 +238,7 @@ def GetUserPAX():
         print(errorMessage)
         PAXReservationInput = input("PAX : ")
         try:
-            if (0 > int(PAXReservationInput)) and (int(PAXReservationInput)> 5):
+            if (int(PAXReservationInput) > 0) and (int(PAXReservationInput) < 5):
                 break
             else :
                 errorMessage = "Restaurant seating can only accommodate 1 to 4 people only!"
@@ -252,24 +260,55 @@ def WriteReservationList():
 
 
     #Confirmation
-    #TODO: add confirm or cancel option + add to txt file
-    os.system('cls')
-    print(f""" Confirm booking :  
-    Name : {currentUserReservation[3]}
-    Date : {currentUserReservation[0]}
-    Session : {currentUserReservation[2]}
-    Slot : {currentUserReservation[1]}
-    PAX : {currentUserReservation[6]}
-    Number : {currentUserReservation[5]}
-    Email : {currentUserReservation[4]}
-    """)
+    while True:
+        os.system('cls')
+        print(f""" Guest Details:
+            Name : {currentUserReservation[3]}
+            Number : {currentUserReservation[5]}
+            Email : {currentUserReservation[4]}
+    
+            Reservation Details:
+            Date : {currentUserReservation[0]}
+            Session : {currentUserReservation[2]}
+            Slot : {currentUserReservation[1]}
+            PAX : {currentUserReservation[6]}
+            """)
 
-    customerReservations.append(currentUserReservation)
+        confirmation = input("Confirm? [y/n] : ").upper()
+        if confirmation == "Y":
+            WriteReservationDatabase(currentUserReservation)
+            customerReservations.append(currentUserReservation)
+            break
+        elif confirmation == "N":
+            WriteReservationList()
+            break
+        else:
+            continue
+    NavigateMenu()
 
-def DisplayReservationList():
-    os.system('cls')
+def GetUserReservationList(phoneNumber):
+    """Given a phone number, return a list containing all reservation of said person"""
+    userReservations = []
+
     for customerReservation in customerReservations:
-        print(customerReservation)
+        if customerReservation[5] == phoneNumber:
+            userReservations.append(customerReservation)
+    return userReservations
+
+def DisplayReservationList(userReservations):
+    """Given a reservation list, print all details of all reservations"""
+    for userReservation in userReservations:
+        print(f""" Guest Details:
+            Name : {userReservation[3]}
+            Number : {userReservation[5]}
+            Email : {userReservation[4]}
+
+            Reservation Details:
+            Date : {userReservation[0]}
+            Session : {userReservation[2]}
+            Slot : {userReservation[1]}
+            PAX : {userReservation[6]}
+            """)
 
 def DeleteReservationList(): #TODO ideas Ask for phone number
     os.system('cls')
