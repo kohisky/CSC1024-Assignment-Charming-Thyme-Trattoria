@@ -51,11 +51,11 @@ def NavigateMenu():
 
         #TODO: evaluate matchcase vs elif
         if(navigateUserInput == 1):
-            WriteReservationList()
+            outputMessage = WriteReservationList()
         elif(navigateUserInput == 2):
             outputMessage = DeleteReservationList()
         elif(navigateUserInput == 3):
-            EditReservationList()
+            outputMessage = EditReservationList()
         elif(navigateUserInput == 4):
             userPhoneNumber = input("Please insert your phone number : ")
             outputMessage = DisplayReservationList(GetUserReservationList(userPhoneNumber))
@@ -70,6 +70,7 @@ def NavigateMenu():
 
 def ReadReservationDatabase():
     '''Reads initial reservations from provided .txt file and write into customerReservations'''
+    customerReservations.clear()
     with open(initialReservationsTxt,"r") as reservationFile:
         initialReservationsList = reservationFile.read()
         for initialReservation in  initialReservationsList.split('\n'):
@@ -91,14 +92,13 @@ def WriteReservationDatabase():
             string += "|"
         string = string[:-1]
         string += "\n"
-
+    string = string[:-1]
     with open(initialReservationsTxt,"w") as reservationFile:
         reservationFile.write(string)
 
 
 def GetReservationDate():
     """Ask user for date, checks if custom date is 5 days ahead of today, returns the date in iso format"""
-    # TODO:Consider giving users to choose first 5 of the days available? if date have 32 bookings, X
     # Custom Date
     minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=6)
     errorMessage = " "
@@ -264,8 +264,6 @@ def WriteReservationList():
     currentUserReservation.append(GetUserEmail())
     currentUserReservation.append(GetUserNumber())
     currentUserReservation.append(GetUserPAX())
-    print(currentUserReservation)
-
 
     #Confirmation
     while True:
@@ -292,6 +290,7 @@ def WriteReservationList():
             break
         else:
             continue
+    return "1 Reservation Added! Thank you very much!"
 
 def GetUserReservationList(phoneNumber):
     """Given a phone number, return a list containing all reservation of said person"""
@@ -334,13 +333,12 @@ def GetReservationListToDelete(userReservations):
     """Given a reservations list, prompts user to choose one reservation to delete, return a reservation array"""
     while True:
         try:
-            reservationToDelete = int(input("Which reservation do you want to delete? : ")) - 1
+            reservationToDelete = int(input("Which reservation do you want to change? : ")) - 1
             if (reservationToDelete < len(userReservations)) and (reservationToDelete >= 0):
-                print(userReservations)
                 print(DisplayReservationList([userReservations[reservationToDelete]]))
 
                 while True:
-                    confirmation = input("Confirm delete? (y/n) :").upper()
+                    confirmation = input("Confirm? (y/n) :").upper()
                     if confirmation == "Y":
                         return userReservations[reservationToDelete]
                     elif confirmation == "N":
@@ -356,14 +354,11 @@ def GetReservationListToDelete(userReservations):
     return []
 
 def DeleteReservationList():
-    print(customerReservations)
-
     while True:
         os.system('cls')
         userPhoneNumber = input("Please insert your phone number : ")
         if userPhoneNumber.isnumeric():
             break
-
     userReservationList = GetUserReservationList(userPhoneNumber)
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
@@ -375,163 +370,57 @@ def DeleteReservationList():
     WriteReservationDatabase()
     return "1 reservation deleted"
 
-
 def EditReservationList():
-    file = open("reservation_StudentID.txt")
-
-    #List to contain all initial information from "reservation_StudentID.txt"
-    list = []
-    #Reading the data from "reservation_StudentID.txt"
-    data = file.read()
-    #Putting the data into a list
-    list = data.replace("\n", "|").split("|")
-    list.pop(-1)
-
-    start = True
-    while start:
+    errorMessage = ""
+    while True:
+        os.system('cls')
+        userPhoneNumber = input("Please insert your phone number : ")
+        if userPhoneNumber.isnumeric():
+            break
+    userReservationList = GetUserReservationList(userPhoneNumber)
+    print(DisplayReservationList(userReservationList))
+    if len(userReservationList) <= 0:
+        return "No reservation edited : no reservations under given number"
+    reservationListToDelete = GetReservationListToDelete(userReservationList)
+    reservationListToAdd = reservationListToDelete
+    if len(reservationListToDelete) <= 0:
+        return "No reservation edited : no reservation chosen"
+    customerReservations.remove(reservationListToDelete)
+    WriteReservationDatabase()
+    ReadReservationDatabase()
+    while True:
+        os.system('cls')
+        print(DisplayReservationList(userReservationList))
+        print(f"\n{errorMessage}")
         try:
-            #Using their phone number to find their reservation to edit
-            pncheck = input("Please enter your number to find your Reservation.")
-            mobilelocation = 5
-            #Find/Check the location of the phone number in the list
-            while pncheck != list[mobilelocation]:
-                mobilelocation += 6
-                if IndexError:
-                    print("Number does not exist within the database.")
-                    pncheck = input("Please enter your number to find your Reservation.")
-                    mobilelocation = 5
-                    continue
-                else:
-                    break
+            editSelection = int(input("""
+            Reservation Changes:
+            [1] Reschedule Reservation
+            [2] Change Your Personal Details
+            [3] No Changes"""))
+        except Exception:
+            errorMessage = "Please choose a number!"
 
-            datelocation = mobilelocation - 4
-            slotlocation = mobilelocation - 3
-            namelocation = mobilelocation - 2
-            emaillocation = mobilelocation - 1
-            paxlocation = mobilelocation + 1
+        if editSelection == 1:
+            reservationListToAdd[1] = str(GetReservationSession(CheckAvailableSessionAndSlot(reservationListToAdd[0])))
+            reservationListToAdd[2] = str(GetReservationSlot((CheckAvailableSessionAndSlot(reservationListToAdd[0])[int(reservationListToAdd[1])-1])))
+            break
+        elif editSelection == 2:
+            reservationListToAdd[3] = GetUserName()
+            reservationListToAdd[4] = GetUserEmail()
+            reservationListToAdd[5] = GetUserNumber()
+            reservationListToAdd[6] = GetUserPAX()
+            break
+        elif editSelection == 3:
+            customerReservations.append(reservationListToDelete) #Append again the reservation when no changes are done
+            return " "
+        else:
+            errorMessage = "Please choose a number from above!"
+        continue
 
-            def customerdetails():
-                print(f"""
-Reservation Details:
-Date  : {list[datelocation]}
-Slot  : {list[slotlocation]}
-PAX   : {list[paxlocation]}
-Guest Details:
-Name  : {list[namelocation]}
-Mobile: {list[mobilelocation]}
-Email : {list[emaillocation]}
-""")
-            customerdetails()
-
-            correct = input("Is this your Reservation? [Yes/No] ").lower()
-
-            while correct != 'yes' and correct != 'no':
-                correct = input("Is this your Reservation? [Yes/No]").lower()
-            if correct == 'no':
-                start = False
-
-            changeselection = input("""
-Reservation Changes:
-[1] Reschedule Reservation
-[2] Change Your Personal Details
-[3] No Changes
-Select: """).lower()
-
-            while changeselection != '1' and changeselection != '2' and changeselection != '3':
-                changeselection = input("""
-Reservation Changes:
-[1] Reschedule Reservation
-[2] Change Your Personal Details
-[3] No Changes
-Select: """).lower()
-            
-            if changeselection == '1':
-                while True:
-                    reservationdate = input("Please insert date (yyyy-mm-dd): ")
-                    try:
-                        reservationdate = datetime.date.fromisoformat(reservationdate)
-                        reservationdate = datetime.datetime.date(reservationdate)
-                        
-                        daycheck = datetime.date(datetime.datetime.now() + datetime.timedelta(days=5))
-                
-                        if daycheck <= reservationdate:
-                            list[datelocation] = str(reservationdate)
-                            break
-                        else:
-                            print("Booking must be 5 days in advance")
-                            continue
-                        
-                    except ValueError:
-                        continue            
-                
-                list[slotlocation] = ("Slot " + str(input("""
-Please select a slot
-[1] 12:00 pm - 02:00 pm
-[2] 02:00 pm - 04:00 pm
-[3] 06:00 pm - 08:00 pm
-[4] 08:00 pm - 10:00 pm
-Select: """)))
-                list[paxlocation] = input("PAX (1-4): ")
-                customerdetails()
-
-                confirm1 = input("Confirm changes? [Yes/No] ").lower()
-
-                while confirm1 != 'yes' and confirm1 != 'no':
-                    confirm1 = input("Confirm changes? [Yes/No]").lower()
-                if confirm1 == 'no':
-                    start = False
-
-                numitem = len(list)
-                one = 0 
-                two = 6
-                clear = open("reservation_StudentID.txt", "w")
-                clear.write("")
-                with open("reservation_StudentID.txt", "w") as edit:
-                    while one != numitem:
-                        edit.write("|".join(list[one:two]) + "\n")
-                        one += 6; two += 6
-                start = False
-                
-                
-
-            elif changeselection == '2':
-                list[namelocation] = input("Name: ")
-                list[mobilelocation] = input("New Phone Number: ")
-                list[emaillocation] = input("New E-mail Address: ")
-                customerdetails()
-
-                confirm2 = input("Confirm changes? [Yes/No] ").lower()
-
-                while confirm2 != 'yes' and confirm2 != 'no':
-                    confirm2 = input("Confirm changes? [Yes/No]").lower()
-                if confirm2 == 'no':
-                    start = False
-
-                numitem = len(list)
-                one = 0 
-                two = 6
-                clear = open("reservation_StudentID.txt", "w")
-                clear.write("")
-                with open("reservation_StudentID.txt", "w") as edit:
-                    while one != numitem:
-                        edit.write("|".join(list[one:two]) + "\n")
-                        one += 6; two += 6
-                    
-                start = False
-
-            elif changeselection == '3':
-                start = False
-
-        finally:
-            again = input("Would you like to edit your reservation? [Yes/No] ").lower()
-
-            while again != 'yes' and again != 'no':
-                again = input("Would you like to edit your reservation? [Yes/No]").lower()
-
-            if again == 'no':
-                start = False
-    file.close()
-
+    customerReservations.append(reservationListToAdd)
+    WriteReservationDatabase()
+    return "1 reservation edited"
 
 def GenerateMealRecommendation():
     return f" Recommendation : {random.choice(menuItems)} "
