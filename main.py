@@ -85,22 +85,24 @@ def GetReservationDate():
     # TODO:Consider giving users to choose first 5 of the days available? if date have 32 bookings, X
     # Custom Date
     minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=6)
-    os.system('cls')
-    print("{:^100}".format(f"Book a reservation! Earliest date for booking : {minDateInAdvanced}"))
+    errorMessage = " "
+
     while True:
+        os.system('cls')
+        print("{:^100}".format(f"Book a reservation! Earliest date for booking : {minDateInAdvanced}"))
+        print(errorMessage)
         reservationDate = input("Please insert date (yyyy-mm-dd): ")
         try:
             datetime.date.fromisoformat(reservationDate)
         except ValueError:
-            print("Please insert date in the iso format (yyyy-mm-dd)!")
+            errorMessage = "Please insert date in the iso format (yyyy-mm-dd)!"
             continue
 
         daysDifference = datetime.datetime.strptime(reservationDate, date_format) - datetime.datetime.today()
         if (daysDifference.days >= 5):
             return reservationDate
-
             break
-        print(f"Earliest date for booking : {minDateInAdvanced}")
+        errorMessage = f"Earliest date for booking : {minDateInAdvanced}"
 
 def CheckAvailableSessionAndSlot(date):
     """Given a date checks for available sessions and slots, return 2d list of available session and slots"""
@@ -111,6 +113,7 @@ def CheckAvailableSessionAndSlot(date):
     return sessionSlots
 
 def GetReservationSession(sessionSlots):
+    errorMessage = ""
 
     sessions = [
         [1, "12:00 pm - 02:00 pm"],
@@ -123,27 +126,28 @@ def GetReservationSession(sessionSlots):
             sessions[session][0] = "X"
 
     while True:
-        os.system('cls')  # TODO: make it not erase error messages
+        os.system('cls')
         print("{:^100}".format(" Please select a session "))
         for session in range(len(sessions)):
             print(f"[{sessions[session][0]}] {sessions[session][1]}")
 
+        print(errorMessage)
         try:
             sessionReservationInput = int(input(("Please select a number : ")))
         except Exception:
-            print("Please input a number from 1 to 4!")
+            errorMessage = "Please input a number from 1 to 4!"
             continue
 
         if (sessionReservationInput < 5) and (sessionReservationInput > 0):
             if sessions[sessionReservationInput-1][0] != "X":
                 return sessionReservationInput
             else :
-                print("Chosen Session is already full, please pick another!")
+                errorMessage = "Chosen Session is already full, please pick another!"
                 continue
-        print("Please input a number from 1 to 4!")
+        errorMessage = "Please input a number from 1 to 4!"
 
 def GetReservationSlot(sessionSlots):
-
+    errorMessage = " "
     slots = [
         [1, "Slot 1"],
         [2, "Slot 2"],
@@ -164,62 +168,74 @@ def GetReservationSlot(sessionSlots):
         for slot in range(len(slots)):
             print(f"[{slots[int(slot)][0]}] {slots[int(slot)][1]}")
 
+        print(errorMessage)
         try:
             slotReservationInput = int(input(("Please select a number : ")))
         except Exception:
-            print("Please input a number from 1 to 8!")
+            errorMessage = "Please input a number from 1 to 8!"
             continue
 
         if (slotReservationInput < 9) and (slotReservationInput > 0):
             if slots[int(slotReservationInput)-1][0] != "X":
                 return slotReservationInput
             else:
-                print("Chosen slot is already full, please pick another!")
+                errorMessage = "Chosen slot is already full, please pick another!"
                 continue
-        print("Please input a number from 1 to 8!")
+        errorMessage = "Please input a number from 1 to 8!"
 
 def GetUserName():
+    errorMessage = ""
     while True:
         os.system('cls')
         print("{:^100}".format(" Please type your name"))
+        print(errorMessage)
         nameReservationInput = input("Name : ").upper()
         if nameReservationInput.isalpha():
             break
         else:
-            print("Please type a proper name!")
+            errorMessage = "Please type a proper name!"
     return nameReservationInput
 
 def GetUserEmail():
+    errorMessage = " "
     while True:
         os.system('cls')
         print("{:^100}".format(" Please type your e-mail address "))
+        print(errorMessage)
         emailReservationInput = input("E-mail : ")
         if emailReservationInput.isalnum():
             break
         else:
-            print("Please type a proper e-mail address!")
+            errorMessage = "Please type a proper e-mail address!"
     return emailReservationInput
 
 def GetUserNumber():
+    errorMessage = " "
     while True:
         os.system('cls')
         print("{:^100}".format (" Please type your contact number "))
+        print(errorMessage)
         numberReservationInput = input("Contact number : ")
         if numberReservationInput.isnumeric():
             break
         else:
-            print("Please type your phone number!")
+            errorMessage = "Please type your phone number!"
     return numberReservationInput
 
 def GetUserPAX():
+    errorMessage = " "
     while True:
         os.system('cls')
         print("{:^100}".format(" Please type the number of people "))
+        print(errorMessage)
         PAXReservationInput = input("PAX : ")
-        if (0 > PAXReservationInput) and (PAXReservationInput> 5):
-            break
-        else:
-            print("Restaurant seating can only accommodate 1 to 4 people only!")
+        try:
+            if (0 > int(PAXReservationInput)) and (int(PAXReservationInput)> 5):
+                break
+            else :
+                errorMessage = "Restaurant seating can only accommodate 1 to 4 people only!"
+        except Exception:
+            errorMessage = "Please insert a number!"
     return PAXReservationInput
 
 def WriteReservationList():
