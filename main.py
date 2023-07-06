@@ -23,30 +23,29 @@ def NavigateMenu():
     while True:
         os.system('cls')
         print("""
-            __                                         _____                       _____                              
-           / () |)    _,   ,_          o        _,    () ||)                 _    () | ,_   _, _|__|_  _   ,_  o  _,  
-          |     |/\  / |  /  | /|/|/|  | /|/|  / |       ||/\  |  | /|/|/|  |/       |/  | / |  |  |  / \_/  | | / |  
-           \___/|  |/\/|_/   |/ | | |_/|/ | |_/\/|/    (/ |  |/ \/|/ | | |_/|_/    (/    |/\/|_/|_/|_/\_/    |/|/\/|_/
-                                                (|               (|                     
-
+  __                                         _____                       _____                              
+ / () |)    _,   ,_          o        _,    () ||)                 _    () | ,_   _, _|__|_  _   ,_  o  _,  
+|     |/\  / |  /  | /|/|/|  | /|/|  / |       ||/\  |  | /|/|/|  |/       |/  | / |  |  |  / \_/  | | / |  
+ \___/|  |/\/|_/   |/ | | |_/|/ | |_/\/|/    (/ |  |/ \/|/ | | |_/|_/    (/    |/\/|_/|_/|_/\_/    |/|/\/|_/
+                                      (|               (|                     
            """)
-        print("{:^100}".format(" Welcome to Charming Thyme Trattoria! "))
+        print("{:=^108}".format(" Welcome to Charming Thyme Trattoria! "))
 
-        print(" [1] Book a reservation   ")
-        print(" [2] Delete a reservation  ")
-        print(" [3] Edit a reservation    ")
-        print(" [4] Display Reservations ")
+        print(" [1] Book a reservation ")
+        print(" [2] Cancel a reservation ")
+        print(" [3] Edit a reservation ")
+        print(" [4] Display Reservation ")
         print(" [5] Recommend me a dish! ")
-        print(" [6] Close Transaction   ")
+        print(" [6] Close Transaction ")
         print("\n")
         print(outputMessage)
         try:
-            navigateUserInput = int(input(("Please select a number : ")))
+            navigateUserInput = int(input((" Please select a number : ")))
         except Exception:
-            outputMessage = "Please input a number!"
+            outputMessage = " Please input a number!"
             continue
         if (navigateUserInput > 7) or (navigateUserInput < 0):
-            outputMessage = "Please input a number from 1 to 6!"
+            outputMessage = " Please input a number from 1 to 6!"
             continue
 
         #TODO: evaluate matchcase vs elif
@@ -57,13 +56,18 @@ def NavigateMenu():
         elif(navigateUserInput == 3):
             outputMessage = EditReservationList()
         elif(navigateUserInput == 4):
-            userPhoneNumber = input("Please insert your phone number : ")
+            userPhoneNumber = input(" Please insert your phone number : ")
             outputMessage = DisplayReservationList(GetUserReservationList(userPhoneNumber))
         elif(navigateUserInput == 5):
             outputMessage = GenerateMealRecommendation()
         elif(navigateUserInput == 6):
-            print("Closing Application")
+            print(" Closing Application")
+            start_time = datetime.datetime.now()
+            end_time = start_time + datetime.timedelta(seconds = 1)
+            while datetime.datetime.now() < end_time:
+                continue
             os.system('cls')
+            break
         else: #not sure if this [else] is needed but wokay
             print("Expect The Unexpected")
         continue
@@ -73,7 +77,7 @@ def ReadReservationDatabase():
     customerReservations.clear()
     with open(initialReservationsTxt,"r") as reservationFile:
         initialReservationsList = reservationFile.read()
-        for initialReservation in  initialReservationsList.split('\n'):
+        for initialReservation in initialReservationsList.split('\n'):
             customerReservations.append(initialReservation.split('|'))
 
 def ReadMenuDatabase():
@@ -97,16 +101,21 @@ def WriteReservationDatabase():
         reservationFile.write(string)
 
 
-def GetReservationDate():
+def GetReservationDate(bookedout = False):
     """Ask user for date, checks if custom date is 5 days ahead of today, returns the date in iso format"""
     # Custom Date
-    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=6)
+    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=5)
     errorMessage = " "
 
     while True:
         os.system('cls')
-        print("{:^100}".format(f"Book a reservation! Earliest date for booking : {minDateInAdvanced}"))
-        print(errorMessage)
+        print("{:=^108}".format(f" Booking Reservation "))
+        print(f"Earliest date for booking : {minDateInAdvanced} ")
+        if bookedout:
+            print("Chosen Date is fully booked out, please choose another date.")
+            bookedout = False  
+        else:
+            print(errorMessage)
         reservationDate = input("Please insert date (yyyy-mm-dd): ")
         try:
             datetime.date.fromisoformat(reservationDate)
@@ -118,7 +127,7 @@ def GetReservationDate():
         if (daysDifference.days >= 5):
             return reservationDate
             break
-        errorMessage = f"Earliest date for booking : {minDateInAdvanced}"
+        errorMessage = ""
 
 def CheckAvailableSessionAndSlot(date):
     """Given a date checks for available sessions and slots, return 2d list of available session and slots"""
@@ -140,27 +149,34 @@ def GetReservationSession(sessionSlots):
     for session in range(len(sessions)):
         if len(sessionSlots[session]) >= 8:
             sessions[session][0] = "X"
+    
+    if sessions[0][0] == "X" and sessions[1][0] == "X" and sessions[2][0] == "X" and sessions[3][0] == "X":
+        return None
+             
+    else:    
+        while True:
+            os.system('cls')
+            print("{:=^108}".format(f" Session Selection "))
+            if sessions[0][0] == "X" or sessions[1][0] == "X" or sessions[2][0] == "X" or sessions[3][0] == "X":
+                print("{:^108}".format(" 'X' means Booked & Unavailable "))
+            print("Please select a session")
+            for session in range(len(sessions)):
+                print(f"[{sessions[session][0]}] {sessions[session][1]}")
 
-    while True:
-        os.system('cls')
-        print("{:^100}".format(" Please select a session "))
-        for session in range(len(sessions)):
-            print(f"[{sessions[session][0]}] {sessions[session][1]}")
-
-        print(errorMessage)
-        try:
-            sessionReservationInput = int(input(("Please select a number : ")))
-        except Exception:
-            errorMessage = "Please input a number from 1 to 4!"
-            continue
-
-        if (sessionReservationInput < 5) and (sessionReservationInput > 0):
-            if sessions[sessionReservationInput-1][0] != "X":
-                return sessionReservationInput
-            else :
-                errorMessage = "Chosen Session is already full, please pick another!"
+            print(errorMessage)
+            try:
+                sessionReservationInput = int(input(("Please select a number : ")))
+            except Exception:
+                errorMessage = "Please input a number from 1 to 4!"
                 continue
-        errorMessage = "Please input a number from 1 to 4!"
+
+            if (sessionReservationInput < 5) and (sessionReservationInput > 0):
+                if sessions[sessionReservationInput-1][0] != "X":
+                    return sessionReservationInput
+                else :
+                    errorMessage = "Chosen Session is already full, please pick another!"
+                    continue
+            errorMessage = "Please input a number from 1 to 4!"
 
 def GetReservationSlot(sessionSlots):
     errorMessage = " "
@@ -180,7 +196,10 @@ def GetReservationSlot(sessionSlots):
 
     while True:
         os.system('cls')
-        print("{:^100}".format(" Please select a slot "))
+        print("{:=^108}".format(f" Slot Selection "))
+        if slots[0][0] == "X" or slots[1][0] == "X" or slots[2][0] == "X" or slots[3][0] == "X" or slots[4][0] == "X" or slots[5][0] == "X" or slots[6][0] == "X" or slots[7][0] == "X":
+            print("{:^108}".format(" 'X' means Booked & Unavailable "))
+        print("Please select a slot ")
         for slot in range(len(slots)):
             print(f"[{slots[int(slot)][0]}] {slots[int(slot)][1]}")
 
@@ -203,46 +222,49 @@ def GetUserName():
     errorMessage = ""
     while True:
         os.system('cls')
-        print("{:^100}".format(" Please type your name"))
+        print("{:=^108}".format(f" Booking Reservation "))
+        print("Please enter your name")
         print(errorMessage)
         nameReservationInput = input("Name : ").upper()
-        if nameReservationInput.isalpha():
-            break
+        if all(char.isalpha() or char.isspace() for char in nameReservationInput):
+            return nameReservationInput
         else:
-            errorMessage = "Please type a proper name!"
-    return nameReservationInput
+            errorMessage = "Please enter without symbols or number."
 
 def GetUserEmail():
     errorMessage = " "
     while True:
         os.system('cls')
-        print("{:^100}".format(" Please type your e-mail address "))
+        print("{:=^108}".format(f" Booking Reservation "))
+        print("Please enter your e-mail address")
         print(errorMessage)
         emailReservationInput = input("E-mail : ")
         if len(emailReservationInput) > 6:
             break
         else:
-            errorMessage = "Please type a proper e-mail address!"
+            errorMessage = "Please enter a proper e-mail address!"
     return emailReservationInput
 
 def GetUserNumber():
     errorMessage = " "
     while True:
         os.system('cls')
-        print("{:^100}".format (" Please type your contact number "))
+        print("{:=^108}".format(f" Booking Reservation "))
+        print("Please enter your contact number")
         print(errorMessage)
         numberReservationInput = input("Contact number : ")
         if numberReservationInput.isnumeric():
             break
         else:
-            errorMessage = "Please type your phone number without any space/hyphens!"
+            errorMessage = "Please enter your phone number without any space/hyphens."
     return numberReservationInput
 
 def GetUserPAX():
     errorMessage = " "
     while True:
         os.system('cls')
-        print("{:^100}".format(" Please type the number of people "))
+        print("{:=^108}".format(f" Booking Reservation "))
+        print("Please enter the number of people attending")
         print(errorMessage)
         PAXReservationInput = input("PAX : ")
         try:
@@ -251,15 +273,25 @@ def GetUserPAX():
             else :
                 errorMessage = "Restaurant seating can only accommodate 1 to 4 people only!"
         except Exception:
-            errorMessage = "Please insert a number!"
+            errorMessage = "Please enter a number!"
     return PAXReservationInput
 
 def WriteReservationList():
     currentUserReservation = []
     #TODO: make these more readable
-    currentUserReservation.append(GetReservationDate())
-    currentUserReservation.append(str(GetReservationSession(CheckAvailableSessionAndSlot(currentUserReservation[0]))))
-    currentUserReservation.append(str(GetReservationSlot(CheckAvailableSessionAndSlot(currentUserReservation[0])[int(currentUserReservation[1])-1])))
+    reservation_date = GetReservationDate()
+    currentUserReservation.append(reservation_date)
+    session_slots = CheckAvailableSessionAndSlot(reservation_date)
+    reservation_session = GetReservationSession(session_slots)
+    while reservation_session is None:
+        # All sessions are fully booked, prompt the user to choose a new date
+        reservation_date = GetReservationDate(True)
+        currentUserReservation[0] = reservation_date
+        session_slots = CheckAvailableSessionAndSlot(reservation_date)
+        reservation_session = GetReservationSession(session_slots)
+        continue
+    currentUserReservation.append(str(reservation_session))
+    currentUserReservation.append(str(GetReservationSlot(session_slots[int(reservation_session)-1])))
     currentUserReservation.append(GetUserName())
     currentUserReservation.append(GetUserEmail())
     currentUserReservation.append(GetUserNumber())
@@ -268,16 +300,18 @@ def WriteReservationList():
     #Confirmation
     while True:
         os.system('cls')
-        print(f""" Guest Details:
-            Name : {currentUserReservation[3]}
-            Number : {currentUserReservation[5]}
-            Email : {currentUserReservation[4]}
-    
-            Reservation Details:
-            Date : {currentUserReservation[0]}
-            Session : {currentUserReservation[2]}
-            Slot : {currentUserReservation[1]}
-            PAX : {currentUserReservation[6]}
+        print("{:=^108}".format(f" Confirm Reservation "))
+        print(f""" 
+Guest Details:
+Name : {currentUserReservation[3]}
+Number : {currentUserReservation[5]}
+Email : {currentUserReservation[4]}
+
+Reservation Details:
+Date : {currentUserReservation[0]}
+Session : {currentUserReservation[1]}
+Slot : {currentUserReservation[2]}
+PAX : {currentUserReservation[6]}
             """)
 
         confirmation = input("Confirm? [y/n] : ").upper()
@@ -290,7 +324,7 @@ def WriteReservationList():
             break
         else:
             continue
-    return "1 Reservation Added! Thank you very much!"
+    return " 1 Reservation Added! Thank you very much!"
 
 def GetUserReservationList(phoneNumber):
     """Given a phone number, return a list containing all reservation of said person"""
@@ -309,21 +343,22 @@ def DisplayReservationList(userReservations):
     reservationsString =""
     counter = 1
     if len(userReservations) == 0:
-        return "There are no reservations under this number!"
+        return " There are no reservations under this number!"
     for userReservation in userReservations:
 
-        reservationsString += f"Reservation {counter}"
+        reservationsString += f"\nReservation {counter}"
         reservationsString += "\n"
-        reservationsString += (f""" Guest Details:
-            Name : {userReservation[3]}
-            Number : {userReservation[5]}
-            Email : {userReservation[4]}
+        reservationsString += (f"""
+Guest Details:
+Name : {userReservation[3]}
+Number : {userReservation[5]}
+Email : {userReservation[4]}
 
-            Reservation Details:
-            Date : {userReservation[0]}
-            Session : {userReservation[2]}
-            Slot : {userReservation[1]}
-            PAX : {userReservation[6]}
+Reservation Details:
+Date : {userReservation[0]}
+Session : {userReservation[1]}
+Slot : {userReservation[2]}
+PAX : {userReservation[6]}
             """)
         reservationsString += "\n"
         counter+= 1
@@ -333,11 +368,13 @@ def GetReservationListToDelete(userReservations):
     """Given a reservations list, prompts user to choose one reservation to delete, return a reservation array"""
     while True:
         try:
-            reservationToDelete = int(input("Which reservation do you want to change? : ")) - 1
+            reservationToDelete = int(input("Which reservation would you like to cancel? : Reservation ")) - 1
             if (reservationToDelete < len(userReservations)) and (reservationToDelete >= 0):
                 print(DisplayReservationList([userReservations[reservationToDelete]]))
-
+                os.system('cls')
                 while True:
+                    print("{:=^108}".format(" Confirm Reservation "))
+                    print(DisplayReservationList([userReservations[reservationToDelete]]))
                     confirmation = input("Confirm? (y/n) :").upper()
                     if confirmation == "Y":
                         return userReservations[reservationToDelete]
@@ -346,7 +383,7 @@ def GetReservationListToDelete(userReservations):
                     else:
                         continue
             else:
-                print("Pick a number from the above!")
+                print("Pick a reservation number you would like to cancel.")
         except Exception as e:
             print(e)
             print("Pick a number!")
@@ -356,71 +393,75 @@ def GetReservationListToDelete(userReservations):
 def DeleteReservationList():
     while True:
         os.system('cls')
-        userPhoneNumber = input("Please insert your phone number : ")
+        print("{:=^108}".format(f" Cancelling Reservation "))
+        userPhoneNumber = input("Please enter your phone number : ")
         if userPhoneNumber.isnumeric():
             break
     userReservationList = GetUserReservationList(userPhoneNumber)
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
-        return "No reservation deleted : no reservations under given number"
+        return " No reservation cancelled : no reservations were made under the given number"
     reservationListToDelete = GetReservationListToDelete(userReservationList)
     if len(reservationListToDelete) <= 0:
-        return "No reservation deleted : no reservation chosen"
+        return " No reservation cancelled"
     customerReservations.remove(reservationListToDelete)
     WriteReservationDatabase()
-    return "1 reservation deleted"
+    return " 1 reservation cancelled"
 
 def EditReservationList():
     errorMessage = ""
     while True:
         os.system('cls')
-        userPhoneNumber = input("Please insert your phone number : ")
+        print("{:=^108}".format(f" Editing Reservation "))
+        userPhoneNumber = input(" Please insert your phone number : ")
         if userPhoneNumber.isnumeric():
             break
     userReservationList = GetUserReservationList(userPhoneNumber)
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
-        return "No reservation edited : no reservations under given number"
+        return " No reservation edited : no reservations were made under the given number"
     reservationListToDelete = GetReservationListToDelete(userReservationList)
     reservationListToAdd = reservationListToDelete
     if len(reservationListToDelete) <= 0:
-        return "No reservation edited : no reservation chosen"
+        return " No reservation edited"
     customerReservations.remove(reservationListToDelete)
     WriteReservationDatabase()
     ReadReservationDatabase()
     while True:
         os.system('cls')
+        print("{:=^108}".format(f" Editing Reservation "))
         print(DisplayReservationList(userReservationList))
-        print(f"\n{errorMessage}")
+        print(f"{errorMessage}")
         try:
-            editSelection = int(input("""
-            Reservation Changes:
-            [1] Reschedule Reservation
-            [2] Change Your Personal Details
-            [3] No Changes"""))
+            editSelection = (input
+("""Reservation Changes:
+[1] Reschedule Reservation
+[2] Change Your Personal Details
+[3] No Changes
+Please select a number : """))
         except Exception:
             errorMessage = "Please choose a number!"
 
-        if editSelection == 1:
+        if editSelection == "1":
             reservationListToAdd[1] = str(GetReservationSession(CheckAvailableSessionAndSlot(reservationListToAdd[0])))
             reservationListToAdd[2] = str(GetReservationSlot((CheckAvailableSessionAndSlot(reservationListToAdd[0])[int(reservationListToAdd[1])-1])))
             break
-        elif editSelection == 2:
+        elif editSelection == "2":
             reservationListToAdd[3] = GetUserName()
             reservationListToAdd[4] = GetUserEmail()
             reservationListToAdd[5] = GetUserNumber()
             reservationListToAdd[6] = GetUserPAX()
             break
-        elif editSelection == 3:
+        elif editSelection == "3":
             customerReservations.append(reservationListToDelete) #Append again the reservation when no changes are done
             return " "
         else:
-            errorMessage = "Please choose a number from above!"
+            errorMessage = "Please choose a number from below."
         continue
 
     customerReservations.append(reservationListToAdd)
     WriteReservationDatabase()
-    return "1 reservation edited"
+    return " 1 reservation edited"
 
 def GenerateMealRecommendation():
     string = ''
