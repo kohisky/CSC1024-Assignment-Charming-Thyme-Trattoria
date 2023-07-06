@@ -423,7 +423,11 @@ def EditReservationList():
     return "1 reservation edited"
 
 def GenerateMealRecommendation():
-    return f" Recommendation : {random.choice(menuItems)} "
+    string = ''
+    for menuItem in menuItems:
+        string += menuItem
+        string += "\n"
+    return f"{string}\n Recommendation : {random.choice(menuItems)} "
 
 
 if __name__ == '__main__':
