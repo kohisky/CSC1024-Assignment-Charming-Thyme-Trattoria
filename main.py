@@ -442,6 +442,7 @@ Please select a number : """))
             errorMessage = "Please choose a number!"
 
         if editSelection == "1":
+            reservationListToAdd[0] = str(GetReservationDate())
             reservationListToAdd[1] = str(GetReservationSession(CheckAvailableSessionAndSlot(reservationListToAdd[0])))
             reservationListToAdd[2] = str(GetReservationSlot((CheckAvailableSessionAndSlot(reservationListToAdd[0])[int(reservationListToAdd[1])-1])))
             break
