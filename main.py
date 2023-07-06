@@ -278,7 +278,6 @@ def GetUserPAX():
 
 def WriteReservationList():
     currentUserReservation = []
-    #TODO: make these more readable
     reservation_date = GetReservationDate()
     currentUserReservation.append(reservation_date)
     session_slots = CheckAvailableSessionAndSlot(reservation_date)
@@ -430,7 +429,7 @@ def EditReservationList():
     while True:
         os.system('cls')
         print("{:=^108}".format(f" Editing Reservation "))
-        print(DisplayReservationList(userReservationList))
+        print(DisplayReservationList([reservationListToDelete]))
         print(f"{errorMessage}")
         try:
             editSelection = (input
