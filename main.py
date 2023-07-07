@@ -101,7 +101,7 @@ def WriteReservationDatabase():
         reservationFile.write(string)
 
 
-def GetReservationDate(bookedout = False):
+def GetReservationDate(booking = False, editing = False, bookedout = False):
     """Ask user for date, checks if custom date is 5 days ahead of today, returns the date in iso format"""
     # Custom Date
     minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=5)
@@ -109,7 +109,10 @@ def GetReservationDate(bookedout = False):
 
     while True:
         os.system('cls')
-        print("{:=^108}".format(f" Booking Reservation "))
+        if booking:
+            print("{:=^108}".format(f" Booking Reservation "))
+        if editing:
+            print("{:=^108}".format(f" Editing Reservation "))
         print(f"Earliest date for booking : {minDateInAdvanced} ")
         if bookedout:
             print("Chosen Date is fully booked out, please choose another date.")
@@ -218,11 +221,14 @@ def GetReservationSlot(sessionSlots):
                 continue
         errorMessage = "Please input a number from 1 to 8!"
 
-def GetUserName():
+def GetUserName(booking = False, editing = False):
     errorMessage = ""
     while True:
         os.system('cls')
-        print("{:=^108}".format(f" Booking Reservation "))
+        if booking:
+            print("{:=^108}".format(f" Booking Reservation "))
+        if editing:
+            print("{:=^108}".format(f" Editing Reservation "))
         print("Please enter your name")
         print(errorMessage)
         nameReservationInput = input("Name : ").upper()
@@ -231,11 +237,14 @@ def GetUserName():
         else:
             errorMessage = "Please enter without symbols or number."
 
-def GetUserEmail():
+def GetUserEmail(booking = False, editing = False):
     errorMessage = " "
     while True:
         os.system('cls')
-        print("{:=^108}".format(f" Booking Reservation "))
+        if booking:
+            print("{:=^108}".format(f" Booking Reservation "))
+        if editing:
+            print("{:=^108}".format(f" Editing Reservation "))
         print("Please enter your e-mail address")
         print(errorMessage)
         emailReservationInput = input("E-mail : ")
@@ -245,11 +254,14 @@ def GetUserEmail():
             errorMessage = "Please enter a proper e-mail address!"
     return emailReservationInput
 
-def GetUserNumber():
+def GetUserNumber(booking = False, editing = False):
     errorMessage = " "
     while True:
         os.system('cls')
-        print("{:=^108}".format(f" Booking Reservation "))
+        if booking:
+            print("{:=^108}".format(f" Booking Reservation "))
+        if editing:
+            print("{:=^108}".format(f" Editing Reservation "))
         print("Please enter your contact number")
         print(errorMessage)
         numberReservationInput = input("Contact number : ")
@@ -259,11 +271,14 @@ def GetUserNumber():
             errorMessage = "Please enter your phone number without any space/hyphens."
     return numberReservationInput
 
-def GetUserPAX():
+def GetUserPAX(booking = False, editing = False):
     errorMessage = " "
     while True:
         os.system('cls')
-        print("{:=^108}".format(f" Booking Reservation "))
+        if booking:
+            print("{:=^108}".format(f" Booking Reservation "))
+        if editing:
+            print("{:=^108}".format(f" Editing Reservation "))
         print("Please enter the number of people attending")
         print(errorMessage)
         PAXReservationInput = input("PAX : ")
@@ -278,23 +293,23 @@ def GetUserPAX():
 
 def WriteReservationList():
     currentUserReservation = []
-    reservation_date = GetReservationDate()
+    reservation_date = GetReservationDate(booking = True)
     currentUserReservation.append(reservation_date)
     session_slots = CheckAvailableSessionAndSlot(reservation_date)
     reservation_session = GetReservationSession(session_slots)
     while reservation_session is None:
         # All sessions are fully booked, prompt the user to choose a new date
-        reservation_date = GetReservationDate(True)
+        reservation_date = GetReservationDate(booking = True, bookedout = True)
         currentUserReservation[0] = reservation_date
         session_slots = CheckAvailableSessionAndSlot(reservation_date)
         reservation_session = GetReservationSession(session_slots)
         continue
     currentUserReservation.append(str(reservation_session))
     currentUserReservation.append(str(GetReservationSlot(session_slots[int(reservation_session)-1])))
-    currentUserReservation.append(GetUserName())
-    currentUserReservation.append(GetUserEmail())
-    currentUserReservation.append(GetUserNumber())
-    currentUserReservation.append(GetUserPAX())
+    currentUserReservation.append(GetUserName(booking = True))
+    currentUserReservation.append(GetUserEmail(booking = True))
+    currentUserReservation.append(GetUserNumber(booking = True))
+    currentUserReservation.append(GetUserPAX(booking = True))
 
     #Confirmation
     while True:
@@ -363,7 +378,7 @@ PAX : {userReservation[6]}
         counter+= 1
     return reservationsString
 
-def GetReservationListToDelete(userReservations):
+def GetReservationListToDelete(userReservations, cancel = False, editing = False):
     """Given a reservations list, prompts user to choose one reservation to delete, return a reservation array"""
     while True:
         try:
@@ -372,7 +387,10 @@ def GetReservationListToDelete(userReservations):
                 print(DisplayReservationList([userReservations[reservationToDelete]]))
                 os.system('cls')
                 while True:
-                    print("{:=^108}".format(" Confirm Reservation "))
+                    if cancel:
+                        print("{:=^108}".format(" Confirm Cancel Reservation "))
+                    if editing: 
+                        print("{:=^108}".format(" Confirm Edit Reservation "))
                     print(DisplayReservationList([userReservations[reservationToDelete]]))
                     confirmation = input("Confirm? (y/n) :").upper()
                     if confirmation == "Y":
@@ -400,7 +418,7 @@ def DeleteReservationList():
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
         return " No reservation cancelled : no reservations were made under the given number"
-    reservationListToDelete = GetReservationListToDelete(userReservationList)
+    reservationListToDelete = GetReservationListToDelete(userReservationList, cancel = True)
     if len(reservationListToDelete) <= 0:
         return " No reservation cancelled"
     customerReservations.remove(reservationListToDelete)
@@ -419,7 +437,7 @@ def EditReservationList():
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
         return " No reservation edited : no reservations were made under the given number"
-    reservationListToDelete = GetReservationListToDelete(userReservationList)
+    reservationListToDelete = GetReservationListToDelete(userReservationList, editing = True)
     reservationListToAdd = reservationListToDelete
     if len(reservationListToDelete) <= 0:
         return " No reservation edited"
@@ -442,15 +460,15 @@ Please select a number : """))
             errorMessage = "Please choose a number!"
 
         if editSelection == "1":
-            reservationListToAdd[0] = str(GetReservationDate())
+            reservationListToAdd[0] = str(GetReservationDate(editing = True))
             reservationListToAdd[1] = str(GetReservationSession(CheckAvailableSessionAndSlot(reservationListToAdd[0])))
             reservationListToAdd[2] = str(GetReservationSlot((CheckAvailableSessionAndSlot(reservationListToAdd[0])[int(reservationListToAdd[1])-1])))
             break
         elif editSelection == "2":
-            reservationListToAdd[3] = GetUserName()
-            reservationListToAdd[4] = GetUserEmail()
-            reservationListToAdd[5] = GetUserNumber()
-            reservationListToAdd[6] = GetUserPAX()
+            reservationListToAdd[3] = GetUserName(editing = True)
+            reservationListToAdd[4] = GetUserEmail(editing = True)
+            reservationListToAdd[5] = GetUserNumber(editing = True)
+            reservationListToAdd[6] = GetUserPAX(editing = True)
             break
         elif editSelection == "3":
             customerReservations.append(reservationListToDelete) #Append again the reservation when no changes are done
