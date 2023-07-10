@@ -50,7 +50,7 @@ def NavigateMenu():
             outputMessage = " Please input a number from 1 to 6!"
             continue
 
-        #TODO: evaluate matchcase vs elif (Is this still needed??) 
+
         # Check user's option and pass them to their respective options
         if(navigateUserInput == 1):
             outputMessage = WriteReservationList()
