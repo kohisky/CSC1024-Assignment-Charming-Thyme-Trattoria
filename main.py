@@ -106,7 +106,7 @@ def WriteReservationDatabase():
 
 def GetReservationDate(booking = False, editing = False, bookedOut = False):
     # Ask user for date, checks if it is 5 days ahead of today, returns the date in iso format
-    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=5)
+    minDateInAdvanced = datetime.date.today() + datetime.timedelta(days=6)
     errorMessage = " "
 
     while True:
