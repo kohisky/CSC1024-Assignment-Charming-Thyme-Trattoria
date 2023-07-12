@@ -511,7 +511,15 @@ Please select a number : """))
 
     customerReservations.append(reservationListToAdd)
     WriteReservationDatabase()
-    return " 1 reservation edited"
+
+    while True:
+        addReservationAgain = input(" Would you like to add another Reservation? (y/n) ").upper
+        if addReservationAgain == "Y":
+            WriteReservationList()
+        elif addReservationAgain == "N":
+            return " 1 reservation edited"
+        else:
+            continue
 
 # Display User's Reservation Function [Option 4 of Main Menu]
 def DisplayUserReservation():
