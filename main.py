@@ -460,6 +460,12 @@ def EditReservationList():
         userPhoneNumber = input(" Please insert your phone number : ")
         if userPhoneNumber.isnumeric():
             break
+    while True:
+        os.system('cls')
+        print("{:=^108}".format(f" Editing Reservation "))
+        userName = input(" Please insert your name : ")
+        if userPhoneNumber.isnumeric():
+            break
     userReservationList = GetUserReservationList(userPhoneNumber)
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
@@ -511,19 +517,10 @@ Please select a number : """))
 # Display User's Reservation Function [Option 4 of Main Menu]
 def DisplayUserReservation():
     errorMessage = " "
-    while True:
-        os.system('cls')
-        print("{:=^108}".format(f" Displaying Reservation "))
-        print (str(errorMessage))
-        userPhoneNumber = input("Please enter your phone number : ")
-        if userPhoneNumber.isnumeric():
-            break
-        else:
-            errorMessage = "Please enter numbers only!"
-    userReservationList = GetUserReservationList(userPhoneNumber)
-    print(DisplayReservationList(userReservationList))
-    if len(userReservationList) <= 0:
-        return " No reservations were made under the given number."
+    os.system('cls')
+    print("{:=^108}".format(f" Displaying Reservation "))
+    print (str(errorMessage))
+    print(DisplayReservationList(customerReservations))
     continueInput = input("Press enter to main menu.")
     return ""
 
