@@ -361,14 +361,29 @@ PAX : {currentUserReservation[6]}
             continue
     return " 1 Reservation Added! Thank you very much!"
 
-def GetUserReservationList(phoneNumber):
-    # Given a phone number, return a list containing all reservation of said person
+def GetUserIdentity(message):
+    while True:
+        os.system('cls')
+        print("{:=^108}".format(f"{message}"))
+        userPhoneNumber = input("Please enter your phone number : ")
+        if userPhoneNumber.isnumeric():
+            break
+    while True:
+        os.system('cls')
+        print("{:=^108}".format(f"{message}"))
+        userName = input("Please enter your name : ").upper()
+        break
+
+    return userPhoneNumber,userName
+def GetUserReservationList(phoneNumber,name):
+    # Given a phone number and a name, return a list containing all reservation of said person
     userReservations = []
 
     for customerReservation in customerReservations:
         try:
             if (customerReservation[5]) == phoneNumber:
-                userReservations.append(customerReservation)
+                if(customerReservation[3]) == name:
+                    userReservations.append(customerReservation)
         except Exception as e:
             pass
     return userReservations
@@ -434,13 +449,8 @@ def GetReservationListToDelete(userReservations, cancel = False, editing = False
 
 # Delete/Cancel User's Reservation Function [Option 2 of Main Menu]
 def DeleteReservationList():
-    while True:
-        os.system('cls')
-        print("{:=^108}".format(f" Cancelling Reservation "))
-        userPhoneNumber = input("Please enter your phone number : ")
-        if userPhoneNumber.isnumeric():
-            break
-    userReservationList = GetUserReservationList(userPhoneNumber)
+    userPhoneNumber , userName = GetUserIdentity(" Cancelling Reservation ")
+    userReservationList = GetUserReservationList(userPhoneNumber, userName)
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
         return " No reservation cancelled : no reservations were made under the given number"
@@ -454,19 +464,8 @@ def DeleteReservationList():
 # Update/Edit User's Reservation Function [Option 3 of Main Menu]
 def EditReservationList():
     errorMessage = ""
-    while True:
-        os.system('cls')
-        print("{:=^108}".format(f" Editing Reservation "))
-        userPhoneNumber = input(" Please insert your phone number : ")
-        if userPhoneNumber.isnumeric():
-            break
-    while True:
-        os.system('cls')
-        print("{:=^108}".format(f" Editing Reservation "))
-        userName = input(" Please insert your name : ")
-        if userPhoneNumber.isnumeric():
-            break
-    userReservationList = GetUserReservationList(userPhoneNumber)
+    userPhoneNumber, userName = GetUserIdentity("Editing Reservation")
+    userReservationList = GetUserReservationList(userPhoneNumber, userName)
     print(DisplayReservationList(userReservationList))
     if len(userReservationList) <= 0:
         return " No reservation edited : no reservations were made under the given number"
