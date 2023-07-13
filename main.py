@@ -64,6 +64,7 @@ def NavigateMenu():
         elif(navigateUserInput == 6):
             # Closes the program with a delay of 1 second, so the it has time to print closing application
             print(" Closing Application")
+            WriteReservationDatabase()
             start_time = datetime.datetime.now()
             end_time = start_time + datetime.timedelta(seconds = 1)
             while datetime.datetime.now() < end_time:
