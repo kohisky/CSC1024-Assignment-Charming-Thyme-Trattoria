@@ -376,7 +376,7 @@ def DisplayReservationList(userReservations):
     reservationsString =""
     counter = 1
     if len(userReservations) == 0:
-        return " There are no reservations under this number!"
+        return " There are no reservations under this name!"
     for userReservation in userReservations:
 
         reservationsString += f"\nReservation {counter}"
