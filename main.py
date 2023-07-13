@@ -359,7 +359,18 @@ PAX : {currentUserReservation[6]}
             break
         else:
             continue
-    return " 1 Reservation Added! Thank you very much!"
+
+    while True:
+        addReservationAgain = input(" Would you like to add another Reservation? (y/n) ").upper()
+        print(addReservationAgain)
+        if addReservationAgain == "Y":
+            WriteReservationList()
+            break
+        elif addReservationAgain == "N":
+            return " 1 Reservation Added! Thank you very much!"
+        else:
+            continue
+
 
 def GetUserIdentity(message):
     while True:
@@ -394,7 +405,7 @@ def DisplayReservationList(userReservations):
     reservationsString =""
     counter = 1
     if len(userReservations) == 0:
-        return " There are no reservations under this number!"
+        return " There are no reservations under this person!"
     for userReservation in userReservations:
 
         reservationsString += f"\nReservation {counter}"
@@ -513,9 +524,11 @@ Please select a number : """))
     WriteReservationDatabase()
 
     while True:
-        addReservationAgain = input(" Would you like to add another Reservation? (y/n) ").upper
+        addReservationAgain = input(" Would you like to add another Reservation? (y/n) ").upper()
+        print(addReservationAgain)
         if addReservationAgain == "Y":
             WriteReservationList()
+            break
         elif addReservationAgain == "N":
             return " 1 reservation edited"
         else:
