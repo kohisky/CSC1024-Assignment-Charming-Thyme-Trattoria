@@ -332,7 +332,6 @@ PAX : {currentUserReservation[6]}
         confirmation = input("Confirm? [y/n] : ").upper()
         if confirmation == "Y":
             customerReservations.append(currentUserReservation)
-            WriteReservationDatabase()
             break
         elif confirmation == "N":
             NavigateMenu()
@@ -438,7 +437,6 @@ def DeleteReservationList():
     if len(reservationListToDelete) <= 0:
         return " No reservation cancelled"
     customerReservations.remove(reservationListToDelete)
-    WriteReservationDatabase()
     
     while True:
         cancelReservationAgain = input(" Would you like to cancel another Reservation? (y/n) ").upper()
@@ -463,8 +461,6 @@ def EditReservationList():
     if len(reservationListToDelete) <= 0:
         return " No reservation edited"
     customerReservations.remove(reservationListToDelete)
-    WriteReservationDatabase()
-    ReadReservationDatabase()
     while True:
         os.system('cls')
         print("{:=^108}".format(f" Editing Reservation "))
@@ -499,7 +495,6 @@ Please select a number : """))
         continue
 
     customerReservations.append(reservationListToAdd)
-    WriteReservationDatabase()
 
     while True:
         addReservationAgain = input(" Would you like to add another Reservation? (y/n) ").upper()
