@@ -516,18 +516,13 @@ def DisplayUserReservation():
     os.system('cls')
     print("{:=^108}".format(f" Displaying Reservation "))
     print(str(errorMessage))
-    
-    # Open the reservation file 
-    with open(initialReservationsTxt, 'r') as file:
-        displayReservation = file.read().splitlines()
 
     # Format for Headings
     print('{:<10}{:<1}{:<7}{:<1}{:<4}{:<1}{:<22}{:<1}{:<30}{:<1}{:<11}{:<1}{:<3}'.format('Date',"|", 'Session',"|", 'Slot',"|", 'Name',"|", 'Email',"|", 'Number',"|", 'PAX'))
     # Print the reservation following the column headings
-    for line in displayReservation:
-        date, session, slot, name, email, number, PAX = line.split('|')
-        print(date.ljust(10) + "|"+ session.center(7) + "|" + slot.center(4) + "|" + name.ljust(22) + "|" + email.ljust(30) + "|" + number.ljust(11) + "|" + PAX.center(3))
-    
+    for i in range(len(customerReservations)):
+        print(customerReservations[i][0].ljust(10) + "|"+ customerReservations[i][1].center(7) + "|" + customerReservations[i][2].center(4) + "|" + customerReservations[i][3].ljust(22) + "|" + customerReservations[i][4].ljust(30) + "|" + customerReservations[i][5].ljust(11) + "|" + customerReservations[i][6].center(3))     
+
     continueInput = input("\nPress enter to main menu.")
     return ""
 
